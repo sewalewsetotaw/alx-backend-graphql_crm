@@ -157,11 +157,9 @@ class Mutation(graphene.ObjectType):
 # Query Class
 # -------------------------
 class Query(graphene.ObjectType):
-<<<<<<< HEAD
     all_customers = DjangoFilterConnectionField(CustomerType, filterset_class=CustomerFilter)
     all_products = DjangoFilterConnectionField(ProductType, filterset_class=ProductFilter)
     all_orders = DjangoFilterConnectionField(OrderType, filterset_class=OrderFilter)
-=======
     customer = graphene.relay.Node.Field(CustomerType)
     all_customers = DjangoFilterConnectionField(CustomerType, order_by=graphene.List(of_type=graphene.String))
 
@@ -210,4 +208,3 @@ class UpdateLowStockProducts(graphene.Mutation):
             updated_products=updated_list,
             message=f"{len(updated_list)} products restocked successfully"
         )
->>>>>>> bd39b154046260e562f42531bf4e4edbd7ce16af
