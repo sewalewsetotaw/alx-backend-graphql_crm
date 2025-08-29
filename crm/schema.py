@@ -157,6 +157,57 @@ class Mutation(graphene.ObjectType):
 # Query Class
 # -------------------------
 class Query(graphene.ObjectType):
+<<<<<<< HEAD
     all_customers = DjangoFilterConnectionField(CustomerType, filterset_class=CustomerFilter)
     all_products = DjangoFilterConnectionField(ProductType, filterset_class=ProductFilter)
     all_orders = DjangoFilterConnectionField(OrderType, filterset_class=OrderFilter)
+=======
+    customer = graphene.relay.Node.Field(CustomerType)
+    all_customers = DjangoFilterConnectionField(CustomerType, order_by=graphene.List(of_type=graphene.String))
+
+    product = graphene.relay.Node.Field(ProductType)
+    all_products = DjangoFilterConnectionField(ProductType, order_by=graphene.List(of_type=graphene.String))
+
+    order = graphene.relay.Node.Field(OrderType)
+    all_orders = DjangoFilterConnectionField(OrderType, order_by=graphene.List(of_type=graphene.String))
+
+    def resolve_all_customers(self, info, order_by=None, **kwargs):
+        qs = Customer.objects.all()
+        if order_by:
+            qs = qs.order_by(*order_by)
+        return qs
+
+    def resolve_all_products(self, info, order_by=None, **kwargs):
+        qs = Product.objects.all()
+        if order_by:
+            qs = qs.order_by(*order_by)
+        return qs
+
+    def resolve_all_orders(self, info, order_by=None, **kwargs):
+        qs = Order.objects.all()
+        if order_by:
+            qs = qs.order_by(*order_by)
+        return qs
+# ---------------------------
+# MUTATIONS
+# ---------------------------
+class UpdateLowStockProducts(graphene.Mutation):
+    class Arguments:
+        restock_amount = graphene.Int(default_value=10)
+
+    updated_products = graphene.List(ProductType)
+    message = graphene.String()
+
+    def mutate(self, info, restock_amount):
+        products = Product.objects.filter(stock__lt=10)
+        updated_list = []
+        for product in products:
+            product.stock += restock_amount
+            product.save()
+            updated_list.append(product)
+
+        return UpdateLowStockProducts(
+            updated_products=updated_list,
+            message=f"{len(updated_list)} products restocked successfully"
+        )
+>>>>>>> bd39b154046260e562f42531bf4e4edbd7ce16af
