@@ -4,9 +4,10 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from graphene_django.filter import DjangoFilterConnectionField
-from crm.models import Customer, Product, Order
+from .models import Customer, Product, Order
 from .filters import CustomerFilter, ProductFilter, OrderFilter
 import re
+from crm.models import Product  
 
 # -------------------------
 # Object Types (with Relay Node)
