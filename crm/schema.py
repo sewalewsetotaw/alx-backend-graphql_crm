@@ -139,3 +139,25 @@ class Query(graphene.ObjectType):
         if order_by:
             qs = qs.order_by(*order_by)
         return qs
+# ---------------------------
+# MUTATIONS
+# ---------------------------
+class UpdateLowStockProducts(graphene.Mutation):
+    class Arguments:
+        restock_amount = graphene.Int(default_value=10)
+
+    updated_products = graphene.List(ProductType)
+    message = graphene.String()
+
+    def mutate(self, info, restock_amount):
+        products = Product.objects.filter(stock__lt=10)
+        updated_list = []
+        for product in products:
+            product.stock += restock_amount
+            product.save()
+            updated_list.append(product)
+
+        return UpdateLowStockProducts(
+            updated_products=updated_list,
+            message=f"{len(updated_list)} products restocked successfully"
+        )
